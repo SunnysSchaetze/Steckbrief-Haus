@@ -22,6 +22,11 @@ body {
     overflow: hidden;
 }
 
+
+/* =========================================================
+   KARTE
+   ========================================================= */
+
 .card {
     position: relative;
     width: min(100%, 500px);
@@ -30,11 +35,21 @@ body {
     transform-style: preserve-3d;
     cursor: pointer;
     transition: transform 0.25s ease;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
-    overflow: hidden;
-    border-radius: 8px;
     max-height: calc(100vh - 16px);
+
+    /*
+       Wichtig:
+       Overflow bleibt sichtbar, damit der globale
+       Maus-Glitzereffekt weiterhin außerhalb der Karte
+       funktionieren kann.
+    */
+    overflow: visible;
 }
+
+
+/* =========================================================
+   PNG DER KARTE
+   ========================================================= */
 
 .card img {
     position: absolute;
@@ -44,7 +59,52 @@ body {
     object-fit: contain;
     z-index: 1;
     pointer-events: none;
+
+    /*
+       Der Schatten hängt jetzt direkt an der PNG.
+       Dadurch gibt es keinen rechteckigen Schatten
+       außerhalb der tatsächlichen PNG.
+    */
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
+
+    transform-style: preserve-3d;
 }
+
+
+/* =========================================================
+   GEMEINSAME PNG-MASKE FÜR ALLE KARTENEFFEKTE
+   ========================================================= */
+
+.card-effect-mask {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    /*
+       Die PNG selbst bestimmt die sichtbare Fläche.
+       Transparente Bereiche der PNG bleiben transparent.
+    */
+    -webkit-mask-image: url("Häuschen Steckbrief.png");
+    mask-image: url("Häuschen Steckbrief.png");
+
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+
+    -webkit-mask-position: center;
+    mask-position: center;
+
+    -webkit-mask-size: contain;
+    mask-size: contain;
+
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+}
+
+
+/* =========================================================
+   HOLO
+   ========================================================= */
 
 .holo {
     position: absolute;
@@ -83,6 +143,11 @@ body {
     }
 }
 
+
+/* =========================================================
+   LICHTSTREIFEN
+   ========================================================= */
+
 .light {
     position: absolute;
     top: -50%;
@@ -118,6 +183,11 @@ body {
     }
 }
 
+
+/* =========================================================
+   GLITZERSTERNE DER KARTE
+   ========================================================= */
+
 .sparkles {
     position: absolute;
     inset: 0;
@@ -131,6 +201,7 @@ body {
     height: var(--size);
 
     background: white;
+
     clip-path: polygon(
         50% 0%,
         60% 40%,
@@ -173,7 +244,83 @@ body {
     }
 }
 
+
+/* =========================================================
+   KLICK-EFFEKT DIREKT AUF DER KARTE
+   ========================================================= */
+
+.card-click-effect {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100px;
+    height: 100px;
+
+    margin-left: -50px;
+    margin-top: -50px;
+
+    z-index: 5;
+
+    pointer-events: none;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,0.95) 0%,
+            rgba(255,255,180,0.8) 12%,
+            rgba(255,210,0,0.65) 30%,
+            rgba(255,130,0,0.35) 50%,
+            transparent 72%
+        );
+
+    box-shadow:
+        0 0 10px rgba(255,255,255,0.9),
+        0 0 25px rgba(255,220,0,0.8),
+        0 0 45px rgba(255,120,0,0.6);
+
+    transform: scale(0);
+    opacity: 0;
+
+    animation:
+        cardClickFlash
+        0.55s
+        cubic-bezier(.2,.8,.2,1)
+        forwards;
+}
+
+@keyframes cardClickFlash {
+
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    15% {
+        opacity: 1;
+        transform: scale(0.7);
+    }
+
+    45% {
+        opacity: 0.85;
+        transform: scale(1.5);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(2.8);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (max-width: 600px) {
+
     body {
         padding: 8px;
     }
@@ -185,7 +332,9 @@ body {
     }
 }
 
+
 @media (prefers-reduced-motion: reduce) {
+
     .holo,
     .sparkle,
     .card:hover .light {
@@ -200,7 +349,8 @@ body {
 
 
 /* =========================================================
-   MAUSEFFEKT – AUS DEM REFERENZ-CODE
+   MAUSEFFEKT – GLOBAL
+   BLEIBT AUSSERHALB DER KARTE FUNKTIONSFÄHIG
    ========================================================= */
 
 .glitzer {
@@ -296,6 +446,7 @@ body {
         drop-shadow(0 0 19px rgba(255,145,0,.35));
 }
 
+
 .staub {
     position: fixed;
     left: 0;
@@ -330,6 +481,7 @@ body {
         ease-out
         forwards;
 }
+
 
 .klick-flash {
     position: fixed;
@@ -366,7 +518,9 @@ body {
         forwards;
 }
 
+
 @keyframes cursorTrail {
+
     0% {
         opacity: 0;
         transform:
@@ -408,7 +562,9 @@ body {
     }
 }
 
+
 @keyframes staubTrail {
+
     0% {
         opacity: 0;
         transform:
@@ -451,7 +607,9 @@ body {
     }
 }
 
+
 @keyframes flash {
+
     0% {
         opacity: 0;
         transform:
@@ -480,22 +638,40 @@ body {
             scale(.15);
     }
 }
+
 </style>
 </head>
+
 
 <body>
 
 <div class="card" id="card">
 
-    <img src="Häuschen Steckbrief.png" alt="Häuschen Steckbriefkarte">
+    <img
+        src="Häuschen Steckbrief.png"
+        alt="Häuschen Steckbriefkarte"
+    >
 
-    <div class="holo"></div>
 
-    <div class="light"></div>
+    <!-- =====================================================
+         ALLE KARTENEFFEKTE LIEGEN IN DER PNG-MASKE
+         ===================================================== -->
 
-    <div class="sparkles" id="sparkles"></div>
+    <div class="card-effect-mask">
+
+        <div class="holo"></div>
+
+        <div class="light"></div>
+
+        <div
+            class="sparkles"
+            id="sparkles"
+        ></div>
+
+    </div>
 
 </div>
+
 
 <script>
 
@@ -503,18 +679,23 @@ body {
    GLITZERSTERNE DER KARTE
    ========================================================= */
 
-const sparkleContainer = document.getElementById("sparkles");
+const sparkleContainer =
+    document.getElementById("sparkles");
 
 const sparkleCount = 10;
 
 for (let i = 0; i < sparkleCount; i++) {
 
-    const sparkle = document.createElement("div");
+    const sparkle =
+        document.createElement("div");
 
     sparkle.classList.add("sparkle");
 
-    sparkle.style.left = (Math.random() * 92 + 4) + "%";
-    sparkle.style.top = (Math.random() * 92 + 4) + "%";
+    sparkle.style.left =
+        (Math.random() * 92 + 4) + "%";
+
+    sparkle.style.top =
+        (Math.random() * 92 + 4) + "%";
 
     sparkle.style.setProperty(
         "--size",
@@ -531,7 +712,9 @@ for (let i = 0; i < sparkleCount; i++) {
         (Math.random() * 6) + "s"
     );
 
-    sparkleContainer.appendChild(sparkle);
+    sparkleContainer.appendChild(
+        sparkle
+    );
 }
 
 
@@ -539,35 +722,113 @@ for (let i = 0; i < sparkleCount; i++) {
    3D-MAUSBEWEGUNG DER KARTE
    ========================================================= */
 
-const card = document.getElementById("card");
+const card =
+    document.getElementById("card");
 
-card.addEventListener("mousemove", (e) => {
 
-    const rect = card.getBoundingClientRect();
+card.addEventListener(
+    "mousemove",
+    (e) => {
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+        const rect =
+            card.getBoundingClientRect();
 
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+        const x =
+            e.clientX - rect.left;
 
-    const rotateY = ((x - centerX) / centerX) * 8;
-    const rotateX = ((centerY - y) / centerY) * 8;
+        const y =
+            e.clientY - rect.top;
 
-    card.style.transform =
-        `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.025)`;
-});
+        const centerX =
+            rect.width / 2;
 
-card.addEventListener("mouseleave", () => {
+        const centerY =
+            rect.height / 2;
 
-    card.style.transform =
-        "rotateX(0deg) rotateY(0deg) scale(1)";
+        const rotateY =
+            ((x - centerX) / centerX) * 8;
 
-});
+        const rotateX =
+            ((centerY - y) / centerY) * 8;
+
+        card.style.transform =
+            `rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             scale(1.025)`;
+    }
+);
+
+
+card.addEventListener(
+    "mouseleave",
+    () => {
+
+        card.style.transform =
+            "rotateX(0deg) rotateY(0deg) scale(1)";
+
+    }
+);
+
+
+/* =========================================================
+   KLICK-EFFEKT NUR AUF DER PNG-KARTE
+   ========================================================= */
+
+card.addEventListener(
+    "click",
+    function(event) {
+
+        const rect =
+            card.getBoundingClientRect();
+
+        const x =
+            event.clientX - rect.left;
+
+        const y =
+            event.clientY - rect.top;
+
+
+        const effect =
+            document.createElement("div");
+
+        effect.className =
+            "card-click-effect";
+
+
+        effect.style.left =
+            x + "px";
+
+        effect.style.top =
+            y + "px";
+
+
+        /*
+           Der Effekt wird in die PNG-Maske gesetzt.
+           Dadurch kann er niemals außerhalb der PNG
+           sichtbar werden.
+        */
+
+        const mask =
+            card.querySelector(
+                ".card-effect-mask"
+            );
+
+        mask.appendChild(effect);
+
+
+        setTimeout(() => {
+
+            effect.remove();
+
+        }, 650);
+
+    }
+);
 
 
 /* =========================================================
    CURSOR-GLITZEREFFEKT
+   BLEIBT GLOBAL
    ========================================================= */
 
 let letzteX = 0;
@@ -576,6 +837,7 @@ let letzterSpawn = 0;
 let aktiveGlitzer = 0;
 
 const MAX_GLITZER = 180;
+
 
 document.addEventListener(
     "mousemove",
@@ -589,15 +851,20 @@ document.addEventListener(
     }
 );
 
+
 document.addEventListener(
     "touchmove",
     function(event) {
 
-        if (!event.touches || !event.touches.length) {
+        if (
+            !event.touches ||
+            !event.touches.length
+        ) {
             return;
         }
 
-        const touch = event.touches[0];
+        const touch =
+            event.touches[0];
 
         erzeugeBewegungsEffekt(
             touch.clientX,
@@ -609,6 +876,12 @@ document.addEventListener(
         passive: true
     }
 );
+
+
+/*
+   Dieser Klick-Effekt ist weiterhin GLOBAL.
+   Er funktioniert also auch außerhalb der Karte.
+*/
 
 document.addEventListener(
     "click",
@@ -623,23 +896,35 @@ document.addEventListener(
 );
 
 
-function erzeugeBewegungsEffekt(x, y) {
+function erzeugeBewegungsEffekt(
+    x,
+    y
+) {
 
-    const dx = x - letzteX;
-    const dy = y - letzteY;
+    const dx =
+        x - letzteX;
 
-    const entfernung = Math.sqrt(
-        dx * dx +
-        dy * dy
-    );
+    const dy =
+        y - letzteY;
 
-    const jetzt = performance.now();
+    const entfernung =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+    const jetzt =
+        performance.now();
+
 
     if (entfernung < 2) {
         return;
     }
 
-    if (jetzt - letzterSpawn < 12) {
+
+    if (
+        jetzt - letzterSpawn < 12
+    ) {
 
         letzteX = x;
         letzteY = y;
@@ -647,7 +932,10 @@ function erzeugeBewegungsEffekt(x, y) {
         return;
     }
 
-    if (aktiveGlitzer >= MAX_GLITZER) {
+
+    if (
+        aktiveGlitzer >= MAX_GLITZER
+    ) {
 
         letzteX = x;
         letzteY = y;
@@ -655,11 +943,17 @@ function erzeugeBewegungsEffekt(x, y) {
         return;
     }
 
-    const nx = dx / entfernung;
-    const ny = dy / entfernung;
+
+    const nx =
+        dx / entfernung;
+
+    const ny =
+        dy / entfernung;
+
 
     const trailX = x;
     const trailY = y;
+
 
     createGlitzer(
         trailX,
@@ -669,30 +963,45 @@ function erzeugeBewegungsEffekt(x, y) {
         ny
     );
 
-    createStaub(trailX, trailY);
-    createStaub(trailX, trailY);
+
+    createStaub(
+        trailX,
+        trailY
+    );
+
+    createStaub(
+        trailX,
+        trailY
+    );
+
 
     createStaub(
         trailX - nx * 6,
         trailY - ny * 6
     );
 
+
     createStaub(
         trailX - nx * 12,
         trailY - ny * 12
     );
+
 
     createStaub(
         trailX - nx * 25,
         trailY - ny * 25
     );
 
+
     createStaub(
         trailX - nx * 40,
         trailY - ny * 40
     );
 
-    if (Math.random() > .68) {
+
+    if (
+        Math.random() > .68
+    ) {
 
         createGlitzer(
             trailX,
@@ -704,7 +1013,10 @@ function erzeugeBewegungsEffekt(x, y) {
 
     }
 
-    if (entfernung > 15) {
+
+    if (
+        entfernung > 15
+    ) {
 
         createStaub(
             trailX,
@@ -721,7 +1033,10 @@ function erzeugeBewegungsEffekt(x, y) {
             trailY - ny * 30
         );
 
-        if (entfernung > 28) {
+
+        if (
+            entfernung > 28
+        ) {
 
             createStaub(
                 trailX - nx * 45,
@@ -736,10 +1051,15 @@ function erzeugeBewegungsEffekt(x, y) {
         }
     }
 
-    letzterSpawn = jetzt;
 
-    letzteX = x;
-    letzteY = y;
+    letzterSpawn =
+        jetzt;
+
+    letzteX =
+        x;
+
+    letzteY =
+        y;
 }
 
 
@@ -751,46 +1071,64 @@ function createGlitzer(
     ny = 0
 ) {
 
-    if (aktiveGlitzer >= MAX_GLITZER) {
+    if (
+        aktiveGlitzer >= MAX_GLITZER
+    ) {
         return;
     }
 
+
     const element =
         document.createElement("div");
+
 
     element.className =
         grosser
             ? "glitzer long"
             : "glitzer";
 
+
     const color =
         Math.random() > .5
             ? "#ff8500"
             : "#ffe000";
+
 
     const size =
         grosser
             ? 10 + Math.random() * 5
             : 4 + Math.random() * 4;
 
+
     element.style.setProperty(
         "--color",
         color
     );
+
 
     element.style.setProperty(
         "--size",
         size + "px"
     );
 
+
     const seitlich =
         (Math.random() - .5) * 5;
 
-    const px = -ny;
-    const py = nx;
 
-    const sx = px * seitlich;
-    const sy = py * seitlich;
+    const px =
+        -ny;
+
+    const py =
+        nx;
+
+
+    const sx =
+        px * seitlich;
+
+    const sy =
+        py * seitlich;
+
 
     const mx =
         sx -
@@ -799,6 +1137,7 @@ function createGlitzer(
     const my =
         sy -
         ny * (16 + Math.random() * 16);
+
 
     const ex =
         mx -
@@ -809,6 +1148,7 @@ function createGlitzer(
         my -
         ny * (32 + Math.random() * 35) +
         (Math.random() - .5) * 5;
+
 
     element.style.setProperty(
         "--sx",
@@ -840,13 +1180,16 @@ function createGlitzer(
         ey + "px"
     );
 
+
     const duration =
         900 + Math.random() * 550;
+
 
     element.style.setProperty(
         "--duration",
         duration + "ms"
     );
+
 
     element.style.left =
         x + "px";
@@ -854,9 +1197,14 @@ function createGlitzer(
     element.style.top =
         y + "px";
 
+
     aktiveGlitzer++;
 
-    document.body.appendChild(element);
+
+    document.body.appendChild(
+        element
+    );
+
 
     setTimeout(() => {
 
@@ -868,34 +1216,47 @@ function createGlitzer(
 }
 
 
-function createStaub(x, y) {
+function createStaub(
+    x,
+    y
+) {
 
-    if (aktiveGlitzer >= MAX_GLITZER) {
+    if (
+        aktiveGlitzer >= MAX_GLITZER
+    ) {
         return;
     }
+
 
     const element =
         document.createElement("div");
 
-    element.className = "staub";
+
+    element.className =
+        "staub";
+
 
     const color =
         Math.random() > .5
             ? "#ff8500"
             : "#ffe000";
 
+
     element.style.setProperty(
         "--color",
         color
     );
 
+
     const size =
         1.5 + Math.random() * 2.5;
+
 
     element.style.setProperty(
         "--staub-size",
         size + "px"
     );
+
 
     const startX =
         (Math.random() - .5) * 20;
@@ -903,17 +1264,20 @@ function createStaub(x, y) {
     const startY =
         (Math.random() - .5) * 20;
 
+
     const dx =
         (Math.random() - .5) * 48;
 
     const dy =
         (Math.random() - .5) * 48;
 
+
     element.style.left =
         (x + startX) + "px";
 
     element.style.top =
         (y + startY) + "px";
+
 
     element.style.setProperty(
         "--dx",
@@ -925,17 +1289,24 @@ function createStaub(x, y) {
         dy + "px"
     );
 
+
     const duration =
         650 + Math.random() * 550;
+
 
     element.style.setProperty(
         "--duration",
         duration + "ms"
     );
 
+
     aktiveGlitzer++;
 
-    document.body.appendChild(element);
+
+    document.body.appendChild(
+        element
+    );
+
 
     setTimeout(() => {
 
@@ -947,13 +1318,22 @@ function createStaub(x, y) {
 }
 
 
-function klickEffekt(x, y) {
+/* =========================================================
+   GLOBALER KLICK-EFFEKT
+   ========================================================= */
+
+function klickEffekt(
+    x,
+    y
+) {
 
     const flash =
         document.createElement("div");
 
+
     flash.className =
         "klick-flash";
+
 
     flash.style.left =
         x + "px";
@@ -961,9 +1341,17 @@ function klickEffekt(x, y) {
     flash.style.top =
         y + "px";
 
-    document.body.appendChild(flash);
 
-    for (let i = 0; i < 18; i++) {
+    document.body.appendChild(
+        flash
+    );
+
+
+    for (
+        let i = 0;
+        i < 18;
+        i++
+    ) {
 
         createExplosionsGlitzer(
             x,
@@ -971,12 +1359,14 @@ function klickEffekt(x, y) {
             Math.random() > .65
         );
 
+
         createExplosionStaub(
             x,
             y
         );
 
     }
+
 
     setTimeout(() => {
 
@@ -992,27 +1382,34 @@ function createExplosionsGlitzer(
     grosser = false
 ) {
 
-    if (aktiveGlitzer >= MAX_GLITZER) {
+    if (
+        aktiveGlitzer >= MAX_GLITZER
+    ) {
         return;
     }
 
+
     const element =
         document.createElement("div");
+
 
     element.className =
         grosser
             ? "glitzer long"
             : "glitzer";
 
+
     const color =
         Math.random() > .5
             ? "#ff8500"
             : "#ffe000";
 
+
     const size =
         grosser
             ? 13 + Math.random() * 8
             : 7 + Math.random() * 7;
+
 
     element.style.setProperty(
         "--color",
@@ -1024,19 +1421,25 @@ function createExplosionsGlitzer(
         size + "px"
     );
 
+
     const winkel =
-        Math.random() * Math.PI * 2;
+        Math.random() *
+        Math.PI *
+        2;
+
 
     const distance =
         grosser
             ? 55 + Math.random() * 55
             : 35 + Math.random() * 70;
 
+
     const sx =
         (Math.random() - .5) * 6;
 
     const sy =
         (Math.random() - .5) * 6;
+
 
     const mx =
         Math.cos(winkel) *
@@ -1048,6 +1451,7 @@ function createExplosionsGlitzer(
         distance *
         .45;
 
+
     const ex =
         Math.cos(winkel) *
         distance;
@@ -1055,6 +1459,7 @@ function createExplosionsGlitzer(
     const ey =
         Math.sin(winkel) *
         distance;
+
 
     element.style.setProperty(
         "--sx",
@@ -1086,13 +1491,16 @@ function createExplosionsGlitzer(
         ey + "px"
     );
 
+
     const duration =
         500 + Math.random() * 350;
+
 
     element.style.setProperty(
         "--duration",
         duration + "ms"
     );
+
 
     element.style.left =
         x + "px";
@@ -1100,9 +1508,14 @@ function createExplosionsGlitzer(
     element.style.top =
         y + "px";
 
+
     aktiveGlitzer++;
 
-    document.body.appendChild(element);
+
+    document.body.appendChild(
+        element
+    );
+
 
     setTimeout(() => {
 
@@ -1114,40 +1527,57 @@ function createExplosionsGlitzer(
 }
 
 
-function createExplosionStaub(x, y) {
+function createExplosionStaub(
+    x,
+    y
+) {
 
-    if (aktiveGlitzer >= MAX_GLITZER) {
+    if (
+        aktiveGlitzer >= MAX_GLITZER
+    ) {
         return;
     }
+
 
     const element =
         document.createElement("div");
 
-    element.className = "staub";
+
+    element.className =
+        "staub";
+
 
     const color =
         Math.random() > .5
             ? "#ff8500"
             : "#ffe000";
 
+
     element.style.setProperty(
         "--color",
         color
     );
 
+
     const size =
         3 + Math.random() * 4;
+
 
     element.style.setProperty(
         "--staub-size",
         size + "px"
     );
 
+
     const winkel =
-        Math.random() * Math.PI * 2;
+        Math.random() *
+        Math.PI *
+        2;
+
 
     const distance =
         35 + Math.random() * 75;
+
 
     const dx =
         Math.cos(winkel) *
@@ -1157,11 +1587,13 @@ function createExplosionStaub(x, y) {
         Math.sin(winkel) *
         distance;
 
+
     element.style.left =
         x + "px";
 
     element.style.top =
         y + "px";
+
 
     element.style.setProperty(
         "--dx",
@@ -1173,17 +1605,24 @@ function createExplosionStaub(x, y) {
         dy + "px"
     );
 
+
     const duration =
         450 + Math.random() * 400;
+
 
     element.style.setProperty(
         "--duration",
         duration + "ms"
     );
 
+
     aktiveGlitzer++;
 
-    document.body.appendChild(element);
+
+    document.body.appendChild(
+        element
+    );
+
 
     setTimeout(() => {
 
