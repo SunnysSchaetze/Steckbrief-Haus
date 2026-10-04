@@ -36,14 +36,8 @@ body {
     transform-style: preserve-3d;
     cursor: pointer;
     transition: transform 0.25s ease;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
     max-height: calc(100vh - 16px);
-
-    /*
-       NICHT hidden!
-       Der globale Maus-Effekt muss außerhalb
-       der Karte funktionieren können.
-    */
-    overflow: visible;
 }
 
 
@@ -59,30 +53,18 @@ body {
     object-fit: contain;
     z-index: 1;
     pointer-events: none;
-
-    filter:
-        drop-shadow(
-            0 10px 20px rgba(0,0,0,0.35)
-        );
 }
 
 
 /* =========================================================
-   EFFEKT-CONTAINER
+   GEMEINSAME PNG-MASKE
    ========================================================= */
 
-.card-effects {
+.card-effect-mask {
     position: absolute;
     inset: 0;
 
-    z-index: 2;
-
     pointer-events: none;
-
-    /*
-       Die Maske wird per JavaScript direkt aus
-       der tatsächlich geladenen PNG gesetzt.
-    */
 
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
@@ -105,33 +87,25 @@ body {
 .holo {
     position: absolute;
     inset: 0;
-
+    z-index: 2;
     pointer-events: none;
 
-    background:
-        linear-gradient(
-            115deg,
-            rgba(255,0,0,0.35),
-            rgba(255,255,0,0.35),
-            rgba(0,255,255,0.35),
-            rgba(0,100,255,0.35),
-            rgba(255,0,255,0.35),
-            rgba(255,0,0,0.35)
-        );
+    background: linear-gradient(
+        115deg,
+        rgba(255,0,0,0.35),
+        rgba(255,255,0,0.35),
+        rgba(0,255,255,0.35),
+        rgba(0,100,255,0.35),
+        rgba(255,0,255,0.35),
+        rgba(255,0,0,0.35)
+    );
 
     background-size: 400% 400%;
-
     mix-blend-mode: screen;
-
     opacity: 0.18;
 
-    animation:
-        holoMove
-        5s
-        ease-in-out
-        infinite;
+    animation: holoMove 5s ease-in-out infinite;
 }
-
 
 @keyframes holoMove {
 
@@ -155,38 +129,28 @@ body {
 
 .light {
     position: absolute;
-
     top: -50%;
     left: -100%;
-
     width: 60%;
     height: 200%;
-
+    z-index: 3;
     pointer-events: none;
 
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,0.5),
-            transparent
-        );
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.5),
+        transparent
+    );
 
     transform: rotate(25deg);
-
     opacity: 0;
 }
 
-
 .card:hover .light {
     opacity: 1;
-
-    animation:
-        lightSweep
-        1.8s
-        ease-in-out;
+    animation: lightSweep 1.8s ease-in-out;
 }
-
 
 @keyframes lightSweep {
 
@@ -207,14 +171,12 @@ body {
 .sparkles {
     position: absolute;
     inset: 0;
-
+    z-index: 4;
     pointer-events: none;
 }
 
-
 .sparkle {
     position: absolute;
-
     width: var(--size);
     height: var(--size);
 
@@ -231,10 +193,7 @@ body {
         40% 40%
     );
 
-    filter:
-        drop-shadow(
-            0 0 4px white
-        );
+    filter: drop-shadow(0 0 4px white);
 
     animation:
         sparkleAnimation
@@ -242,19 +201,14 @@ body {
         ease-in-out
         infinite;
 
-    animation-delay:
-        var(--delay);
+    animation-delay: var(--delay);
 }
-
 
 @keyframes sparkleAnimation {
 
     0%, 100% {
         opacity: 0;
-
-        transform:
-            scale(0.3)
-            rotate(0deg);
+        transform: scale(0.3) rotate(0deg);
     }
 
     20% {
@@ -263,10 +217,7 @@ body {
 
     50% {
         opacity: 0.2;
-
-        transform:
-            scale(1.2)
-            rotate(45deg);
+        transform: scale(1.2) rotate(45deg);
     }
 
     70% {
@@ -276,26 +227,25 @@ body {
 
 
 /* =========================================================
-   KLICK-EFFEKT INNERHALB DER PNG
+   KARTEN-KLICK-EFFEKT
+   GLEICHE OPTIK WIE DER ORIGINALE KLICK-FLASH
    ========================================================= */
 
 .card-click-layer {
     position: absolute;
-
     inset: 0;
-
+    z-index: 5;
     pointer-events: none;
 }
 
-
-.card-click-effect {
+.card-click-flash-inner {
     position: absolute;
 
-    width: 100px;
-    height: 100px;
+    left: 0;
+    top: 0;
 
-    margin-left: -50px;
-    margin-top: -50px;
+    width: 9px;
+    height: 9px;
 
     border-radius: 50%;
 
@@ -304,59 +254,26 @@ body {
     background:
         radial-gradient(
             circle,
-            rgba(255,255,255,0.95) 0%,
-            rgba(255,255,180,0.8) 12%,
-            rgba(255,210,0,0.65) 30%,
-            rgba(255,130,0,0.35) 50%,
-            transparent 72%
+            #ffffff 0%,
+            #fff6a0 25%,
+            #ffd000 50%,
+            #ff7800 75%,
+            transparent 100%
         );
 
     box-shadow:
-        0 0 10px rgba(255,255,255,0.9),
-        0 0 25px rgba(255,220,0,0.8),
-        0 0 45px rgba(255,120,0,0.6);
+        0 0 5px #fff000,
+        0 0 12px #ffad00,
+        0 0 22px #ff6500;
 
-    transform: scale(0);
-
-    opacity: 0;
+    transform:
+        translate(-50%, -50%)
+        scale(0);
 
     animation:
-        cardClickFlash
-        0.55s
+        flash .42s
         cubic-bezier(.2,.8,.2,1)
         forwards;
-}
-
-
-@keyframes cardClickFlash {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(0);
-    }
-
-    15% {
-        opacity: 1;
-
-        transform:
-            scale(0.7);
-    }
-
-    45% {
-        opacity: 0.85;
-
-        transform:
-            scale(1.5);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(2.8);
-    }
 }
 
 
@@ -373,8 +290,7 @@ body {
     .card {
         width: 100%;
         max-width: 500px;
-        max-height:
-            calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
     }
 }
 
@@ -384,12 +300,8 @@ body {
     .holo,
     .sparkle,
     .card:hover .light {
-
-        animation-duration:
-            0.01ms;
-
-        animation-iteration-count:
-            1;
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
     }
 
     .card {
@@ -399,26 +311,20 @@ body {
 
 
 /* =========================================================
-   GLOBALER MAUSEFFEKT
+   MAUSEFFEKT – ORIGINAL
+   NICHT VERÄNDERT
    ========================================================= */
 
 .glitzer {
     position: fixed;
-
     left: 0;
     top: 0;
-
     pointer-events: none;
-
     z-index: 99999;
-
     width: var(--size);
     height: var(--size);
-
     opacity: 0;
-
-    transform:
-        translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
     background:
         radial-gradient(
@@ -433,15 +339,9 @@ body {
     border-radius: 50%;
 
     filter:
-        drop-shadow(
-            0 0 3px var(--color)
-        )
-        drop-shadow(
-            0 0 7px var(--color)
-        )
-        drop-shadow(
-            0 0 12px rgba(255,150,0,.45)
-        );
+        drop-shadow(0 0 3px var(--color))
+        drop-shadow(0 0 7px var(--color))
+        drop-shadow(0 0 12px rgba(255,150,0,.45));
 
     animation:
         cursorTrail
@@ -450,26 +350,17 @@ body {
         forwards;
 }
 
-
 .glitzer::before,
 .glitzer::after {
-
     content: "";
-
     position: absolute;
-
     left: 50%;
     top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
+    transform: translate(-50%, -50%);
     pointer-events: none;
 }
 
-
 .glitzer::before {
-
     width: 185%;
     height: 14%;
 
@@ -486,13 +377,10 @@ body {
         );
 
     border-radius: 999px;
-
     filter: blur(.3px);
 }
 
-
 .glitzer::after {
-
     width: 14%;
     height: 185%;
 
@@ -509,47 +397,26 @@ body {
         );
 
     border-radius: 999px;
-
     filter: blur(.3px);
 }
 
-
 .glitzer.long {
-
     filter:
-        drop-shadow(
-            0 0 4px #ffffff
-        )
-        drop-shadow(
-            0 0 7px var(--color)
-        )
-        drop-shadow(
-            0 0 13px var(--color)
-        )
-        drop-shadow(
-            0 0 19px rgba(255,145,0,.35)
-        );
+        drop-shadow(0 0 4px #ffffff)
+        drop-shadow(0 0 7px var(--color))
+        drop-shadow(0 0 13px var(--color))
+        drop-shadow(0 0 19px rgba(255,145,0,.35));
 }
 
 
-/* =========================================================
-   STAUB
-   ========================================================= */
-
 .staub {
-
     position: fixed;
-
     left: 0;
     top: 0;
-
     pointer-events: none;
-
     z-index: 99998;
-
     width: var(--staub-size);
     height: var(--staub-size);
-
     border-radius: 50%;
 
     background:
@@ -561,9 +428,7 @@ body {
             transparent 100%
         );
 
-    transform:
-        translate(-50%, -50%);
-
+    transform: translate(-50%, -50%);
     opacity: 0;
 
     box-shadow:
@@ -580,24 +445,14 @@ body {
 }
 
 
-/* =========================================================
-   GLOBALER KLICK-FLASH
-   ========================================================= */
-
 .klick-flash {
-
     position: fixed;
-
     left: 0;
     top: 0;
-
     width: 9px;
     height: 9px;
-
     border-radius: 50%;
-
     pointer-events: none;
-
     z-index: 100000;
 
     background:
@@ -620,23 +475,16 @@ body {
         scale(0);
 
     animation:
-        flash
-        .42s
+        flash .42s
         cubic-bezier(.2,.8,.2,1)
         forwards;
 }
 
 
-/* =========================================================
-   ANIMATIONEN MAUS
-   ========================================================= */
-
 @keyframes cursorTrail {
 
     0% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             translate(var(--sx), var(--sy))
@@ -644,9 +492,7 @@ body {
     }
 
     10% {
-
         opacity: .95;
-
         transform:
             translate(-50%, -50%)
             translate(var(--sx), var(--sy))
@@ -654,9 +500,7 @@ body {
     }
 
     30% {
-
         opacity: .85;
-
         transform:
             translate(-50%, -50%)
             translate(var(--mx), var(--my))
@@ -664,9 +508,7 @@ body {
     }
 
     60% {
-
         opacity: .48;
-
         transform:
             translate(-50%, -50%)
             translate(var(--ex), var(--ey))
@@ -674,9 +516,7 @@ body {
     }
 
     100% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             translate(var(--ex), var(--ey))
@@ -688,9 +528,7 @@ body {
 @keyframes staubTrail {
 
     0% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             translate(0,0)
@@ -698,9 +536,7 @@ body {
     }
 
     20% {
-
         opacity: .8;
-
         transform:
             translate(-50%, -50%)
             translate(
@@ -711,9 +547,7 @@ body {
     }
 
     65% {
-
         opacity: .55;
-
         transform:
             translate(-50%, -50%)
             translate(
@@ -724,9 +558,7 @@ body {
     }
 
     100% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             translate(
@@ -741,36 +573,28 @@ body {
 @keyframes flash {
 
     0% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             scale(0);
     }
 
     15% {
-
         opacity: 1;
-
         transform:
             translate(-50%, -50%)
             scale(1.8);
     }
 
     45% {
-
         opacity: .8;
-
         transform:
             translate(-50%, -50%)
             scale(1);
     }
 
     100% {
-
         opacity: 0;
-
         transform:
             translate(-50%, -50%)
             scale(.15);
@@ -779,7 +603,6 @@ body {
 
 </style>
 </head>
-
 
 <body>
 
@@ -794,28 +617,56 @@ body {
 
 
     <!-- =====================================================
-         ALLE EFFEKTE DER KARTE
+         HOLO – NUR PNG
          ===================================================== -->
 
     <div
-        class="card-effects"
-        id="cardEffects"
+        class="card-effect-mask"
+        id="holoMask"
     >
-
         <div class="holo"></div>
+    </div>
 
+
+    <!-- =====================================================
+         LICHT – NUR PNG
+         ===================================================== -->
+
+    <div
+        class="card-effect-mask"
+        id="lightMask"
+    >
         <div class="light"></div>
+    </div>
 
+
+    <!-- =====================================================
+         GLITZERSTERNE – NUR PNG
+         ===================================================== -->
+
+    <div
+        class="card-effect-mask"
+        id="sparkleMask"
+    >
         <div
             class="sparkles"
             id="sparkles"
         ></div>
+    </div>
 
+
+    <!-- =====================================================
+         KLICK-EFFEKT – NUR PNG
+         ===================================================== -->
+
+    <div
+        class="card-effect-mask"
+        id="clickMask"
+    >
         <div
             class="card-click-layer"
             id="cardClickLayer"
         ></div>
-
     </div>
 
 </div>
@@ -825,22 +676,26 @@ body {
 
 
 /* =========================================================
-   PNG-MASKE AUTOMATISCH AUS DER BEREITS GELADENEN PNG
+   PNG-MASKEN
    ========================================================= */
 
 const cardImage =
     document.getElementById("cardImage");
 
-const cardEffects =
-    document.getElementById("cardEffects");
+
+const maskElements = [
+    document.getElementById("holoMask"),
+    document.getElementById("lightMask"),
+    document.getElementById("sparkleMask"),
+    document.getElementById("clickMask")
+];
 
 
-function setzePNGMaske() {
+function setzePNGMasken() {
 
     /*
-       currentSrc ist wichtig für Google Sites,
-       weil dadurch genau die tatsächlich verwendete
-       Bild-URL genommen wird.
+       Wir benutzen exakt dieselbe Bildquelle,
+       die auch das sichtbare IMG verwendet.
     */
 
     const imageURL =
@@ -853,45 +708,45 @@ function setzePNGMaske() {
     }
 
 
-    const maskURL =
+    const mask =
         `url("${imageURL}")`;
 
 
-    cardEffects.style.webkitMaskImage =
-        maskURL;
+    maskElements.forEach(
+        (element) => {
 
-    cardEffects.style.maskImage =
-        maskURL;
+            element.style.webkitMaskImage =
+                mask;
+
+            element.style.maskImage =
+                mask;
+
+        }
+    );
 }
 
-
-/*
-   Wenn die PNG schon geladen ist.
-*/
 
 if (cardImage.complete) {
 
-    setzePNGMaske();
+    setzePNGMasken();
 
 }
 
 
-/*
-   Falls Google Sites die PNG erst noch lädt.
-*/
-
 cardImage.addEventListener(
     "load",
-    setzePNGMaske
+    setzePNGMasken
 );
 
 
 /* =========================================================
    GLITZERSTERNE DER KARTE
+   ORIGINAL
    ========================================================= */
 
 const sparkleContainer =
     document.getElementById("sparkles");
+
 
 const sparkleCount = 10;
 
@@ -945,6 +800,7 @@ for (
 
 /* =========================================================
    3D-MAUSBEWEGUNG DER KARTE
+   ORIGINAL
    ========================================================= */
 
 const card =
@@ -984,9 +840,7 @@ card.addEventListener(
 
 
         card.style.transform =
-            `rotateX(${rotateX}deg)
-             rotateY(${rotateY}deg)
-             scale(1.025)`;
+            `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.025)`;
     }
 );
 
@@ -1003,7 +857,8 @@ card.addEventListener(
 
 
 /* =========================================================
-   KLICK-EFFEKT NUR INNERHALB DER PNG
+   KLICK AUF DIE KARTE
+   KARTENEFFEKT WIRD NUR INNERHALB DER PNG ERZEUGT
    ========================================================= */
 
 card.addEventListener(
@@ -1022,38 +877,32 @@ card.addEventListener(
             event.clientY - rect.top;
 
 
-        const effect =
+        const flash =
             document.createElement("div");
 
 
-        effect.className =
-            "card-click-effect";
+        flash.className =
+            "card-click-flash-inner";
 
 
-        effect.style.left =
+        flash.style.left =
             x + "px";
 
 
-        effect.style.top =
+        flash.style.top =
             y + "px";
 
 
-        const layer =
-            document.getElementById(
-                "cardClickLayer"
-            );
-
-
-        layer.appendChild(
-            effect
-        );
+        document
+            .getElementById("cardClickLayer")
+            .appendChild(flash);
 
 
         setTimeout(
             () => {
-                effect.remove();
+                flash.remove();
             },
-            650
+            500
         );
 
     }
@@ -1061,7 +910,8 @@ card.addEventListener(
 
 
 /* =========================================================
-   GLOBALER CURSOR-GLITZEREFFEKT
+   CURSOR-GLITZEREFFEKT
+   ORIGINAL
    ========================================================= */
 
 let letzteX = 0;
@@ -1114,7 +964,8 @@ document.addEventListener(
 
 
 /* =========================================================
-   GLOBALER KLICK
+   GLOBALER KLICK-EFFEKT
+   ORIGINAL UNVERÄNDERT
    ========================================================= */
 
 document.addEventListener(
@@ -1129,10 +980,6 @@ document.addEventListener(
     }
 );
 
-
-/* =========================================================
-   MAUSBEWEGUNG
-   ========================================================= */
 
 function erzeugeBewegungsEffekt(
     x,
@@ -1313,10 +1160,6 @@ function erzeugeBewegungsEffekt(
 }
 
 
-/* =========================================================
-   GLITZER ERZEUGEN
-   ========================================================= */
-
 function createGlitzer(
     x,
     y,
@@ -1483,10 +1326,6 @@ function createGlitzer(
 }
 
 
-/* =========================================================
-   STAUB
-   ========================================================= */
-
 function createStaub(
     x,
     y
@@ -1596,10 +1435,6 @@ function createStaub(
 }
 
 
-/* =========================================================
-   GLOBALER KLICK-EFFEKT
-   ========================================================= */
-
 function klickEffekt(
     x,
     y
@@ -1657,10 +1492,6 @@ function klickEffekt(
     );
 }
 
-
-/* =========================================================
-   EXPLOSIONS-GLITZER
-   ========================================================= */
 
 function createExplosionsGlitzer(
     x,
@@ -1825,10 +1656,6 @@ function createExplosionsGlitzer(
     );
 }
 
-
-/* =========================================================
-   EXPLOSIONS-STAUB
-   ========================================================= */
 
 function createExplosionStaub(
     x,
